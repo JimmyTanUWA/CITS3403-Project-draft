@@ -46,3 +46,12 @@ button:hover {
     margin-left: 10px;
     font-weight: bold;
 }
+
+.forgot-password a {
+    color: blue;
+    text-decoration: none;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
