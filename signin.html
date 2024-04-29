@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - ChatWithUs</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: none;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('body').fadeIn(800); // Slow fade in effect over 3 seconds
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Sign In to Your ChatWithUs Account</h1>
+        <p>Access your personal space and connect with others!</p>
+    </header>
+    <section>
+        <form id="signInForm">
+            <input type="email" placeholder="Email" required><br>
+            <input type="password" placeholder="Password" required><br>
+            <button type="submit">Sign In</button>
+        </form>
+        <div class="forgot-password">
+            <a href="#" id="forgotPassword">Forgot Password?</a>
+        </div>
+    </section>
+    <script src="script.js"></script>
+</body>
+</html>
