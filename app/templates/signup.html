@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - ChatWithUs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            display: none;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+</head>
+<body>
+    <header>
+        <h1>Join ChatWithUs</h1>
+        <p>Create an account to start posting!</p>
+    </header>
+    <section>
+        <form id="signUpForm">
+            Enter your: <br>
+            <input type="text" placeholder="Username" required><br>
+            <input type="email" placeholder="Email" required><br>
+            <input type="password" placeholder="Password" required><br>
+            <button type="submit">Sign Up</button>
+        </form>
+    </section>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
