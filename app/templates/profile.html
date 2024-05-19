@@ -1,87 +1,86 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <header>
+        <h1>Profile</h1>
+        <p>Welcome, {{ user.username }}</p>
+    </header>
 
-{% block title %}
-User Profile
-{% endblock %}
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
 
-{% block content %}
-<div class="container">
-    <div class="profile-header">
-        <div class="profile-avatar"></div>
-        <div class="profile-info">
-            <h2>{{ current_user.username }}</h2>
-            <div class="profile-stats">
-                <span>{{ posts_count }} posts</span> · <span>{{ followers_count }} followers</span> · <span>{{ following_count }} following</span>
-            </div>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#changeInfoModal">Edit Profile</button>
-            <button class="btn btn-secondary">View Archive</button>
-        </div>
-    </div>
-    <div class="posts-grid">
-        <!-- Dynamically generate post thumbnails here -->
-        {% for post in posts %}
-            <div class="post">{{ post.title }}</div>
-        {% endfor %}
-    </div>
-</div>
-
-<!-- Modal for changing user information -->
-<div class="modal fade" id="changeInfoModal" tabindex="-1" aria-labelledby="changeInfoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="changeInfoModalLabel">Change Information</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="changeInfoForm" method="post" action="{{ url_for('views.profile') }}">
-                    {{ form.hidden_tag() }}
-                    <div class="form-group">
-                        {{ form.username.label }}<br>
-                        {{ form.username(class='form-control') }}
-                        {% if form.username.errors %}
-                            {% for error in form.username.errors %}
-                                <div class="alert alert-danger">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div><br>
-                    <div class="form-group">
-                        {{ form.email.label }}<br>
-                        {{ form.email(class='form-control') }}
-                        {% if form.email.errors %}
-                            {% for error in form.email.errors %}
-                                <div class="alert alert-danger">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div><br>
-                    <div class="form-group">
-                        {{ form.password.label }}<br>
-                        {{ form.password(class='form-control') }}
-                        {% if form.password.errors %}
-                            {% for error in form.password.errors %}
-                                <div class="alert alert-danger">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div><br>
-                    <div class="form-group">
-                        {{ form.confirm_password.label }}<br>
-                        {{ form.confirm_password(class='form-control') }}
-                        {% if form.confirm_password.errors %}
-                            {% for error in form.confirm_password.errors %}
-                                <div class="alert alert-danger">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div><br>
-                    <button type="submit" class="btn btn-primary">Confirm Change</button>
-                </form>
+    <!-- Profile Edit Modal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProfileForm" method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            {{ form.email.label }} <br>
+                            {{ form.email(class='form-control') }}
+                            {% if form.email.errors %}
+                                {% for error in form.email.errors %}
+                                    <div class="alert alert-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.username.label }} <br>
+                            {{ form.username(class='form-control') }}
+                            {% if form.username.errors %}
+                                {% for error in form.username.errors %}
+                                    <div class="alert alert-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.password.label }} <br>
+                            {{ form.password(class='form-control') }}
+                            {% if form.password.errors %}
+                                {% for error in form.password.errors %}
+                                    <div class="alert alert-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
 
-{% block javascript %}
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{{ url_for('static', filename='script.js') }}"></script>
-{% endblock %}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#editProfileForm').on('submit', function (event) {
+                event.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ url_for("views.profile") }}',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        // Close modal and show success message
+                        $('#editProfileModal').modal('hide');
+                        location.reload(); // Reload the page to reflect changes
+                    },
+                    error: function (response) {
+                        // Show error message
+                        alert('An error occurred while updating your profile. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

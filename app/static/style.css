@@ -55,3 +55,70 @@ button:hover {
 .forgot-password a:hover {
     text-decoration: underline;
 }
+
+/* Style for movie grid */
+.movie-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem; /* Space between movie items */
+    justify-content: center;
+}
+
+.movie-item {
+    border: 1px solid #ccc; /* Light grey border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 0.5rem; /* Padding around content */
+    text-align: center; /* Center the text */
+    width: 150px; /* Set a fixed width for consistency */
+}
+
+.movie-item img.movie-img {
+    max-width: 100%; /* Make sure the image fits within the item */
+    width: 500px; /* Set a fixed width of 500px */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 4px; /* Slight rounding on image corners */
+}
+
+.movie-item a {
+    text-decoration: none; /* Remove underline from links */
+    color: #333; /* Darker text color */
+    font-weight: bold; /* Make the text bold */
+    display: block; /* Ensure the link is a block for padding/margin */
+    margin-top: 0.5rem; /* Space between image and text */
+}
+
+.navigation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.navigation-buttons button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.navigation-buttons button:hover {
+    background-color: #0056b3;
+}
+
+/* Style for flash messages */
+.alert {
+    margin: 0.5rem 0;
+}
+
+/* Style for chats section */
+.chat {
+    border-bottom: 1px solid #ccc;
+    padding: 0.5rem 0;
+}
+
+.chat img {
+    max-width: 100px; /* Set a maximum width for chat images */
+    height: auto;
+}
