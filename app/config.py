@@ -3,11 +3,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') 
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'secret'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or "sqlite:///" + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.path.join(basedir, 'static/uploads')
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    ENV = 'development'
+    TESTING = True
+    FLASK_ENV = 'development'

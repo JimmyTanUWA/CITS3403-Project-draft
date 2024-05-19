@@ -10,7 +10,7 @@ DB_NAME = 'app.db'
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(DevelopmentConfig) #TODEL
+    app.config.from_object(Config) #TODEL
 
     db.init_app(app)
     migrate = Migrate(app, db)
