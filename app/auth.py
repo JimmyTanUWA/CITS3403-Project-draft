@@ -4,6 +4,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .forms import SignInForm, SignUpForm
 from . import db
 from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.utils import secure_filename
+import os
 
 auth = Blueprint('auth', __name__)
 
@@ -25,6 +27,29 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
+@auth.route('/upload_profile_pic', methods=['POST'])
+def upload_profile_pic():
+    if 'profile_pic' not in request.files:
+        flash('No file part', category='error')
+        return redirect(request.url)
+    file = request.files['profile_pic']
+    if file.filename == '':
+        flash('No selected file', category='error')
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        current_user.profile_pic = filename
+        db.session.commit()
+        flash('Profile picture updated!', category='success')
+        return redirect(url_for('views.profile'))
+    flash('Invalid file type', category='error')
+    return redirect(url_for('views.profile'))
+
+def allowed_file(filename):
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():

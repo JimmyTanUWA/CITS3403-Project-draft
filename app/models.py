@@ -25,6 +25,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150), nullable=False)  # User's password
     username = db.Column(db.String(150), nullable=False)  # User's username
     chats = db.relationship('Chat', backref='user', lazy=True, foreign_keys='Chat.user_id')  # Explicit foreign_keys
+    profile_pic = db.Column(db.String(120), nullable=True)  # Add this line
 
     def get_id(self):
         return str(self.id)

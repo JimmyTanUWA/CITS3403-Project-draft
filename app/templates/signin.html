@@ -65,7 +65,23 @@ Sign In - FilmArt
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('body').fadeIn(800); // Slow fade-in effect over 800 milliseconds
+        // Slow fade-in effect over 800 milliseconds
+        $('body').fadeIn(800);
+
+        // Retrieve email from local storage and set it in the email field
+        if (localStorage.getItem('rememberedEmail')) {
+            $('#email').val(localStorage.getItem('rememberedEmail'));
+            $('#remember_me').prop('checked', true);
+        }
+
+        // Store email in local storage if Remember Me is checked
+        $('#signInForm').on('submit', function() {
+            if ($('#remember_me').is(':checked')) {
+                localStorage.setItem('rememberedEmail', $('#email').val());
+            } else {
+                localStorage.removeItem('rememberedEmail');
+            }
+        });
     });
 </script>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
