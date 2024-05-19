@@ -3,14 +3,14 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate, init as flask_migrate_init, migrate as flask_migrate_migrate, upgrade as flask_migrate_upgrade
-from .config import Config
+from .config import Config, DevelopmentConfig
 
 db = SQLAlchemy()
 DB_NAME = 'app.db'
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config.from_object(DevelopmentConfig) #TODEL
 
     db.init_app(app)
     migrate = Migrate(app, db)

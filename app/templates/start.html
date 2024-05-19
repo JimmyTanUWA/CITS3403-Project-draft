@@ -25,8 +25,6 @@ Welcome to FilmArt
             <button type="submit">Search</button>
         </form>
         <a href="{{ url_for('views.profile', username=current_user.username) }}" class="btn btn-primary">Profile</a>
-        <button id="signUpBtn" class="btn btn-primary">Sign Up</button>
-        <button id="signInBtn" class="btn btn-secondary">Sign In</button>
     </div>
 </div>
 
@@ -80,14 +78,7 @@ Welcome to FilmArt
 
     <section class="chats">
         <h2>Your Chats</h2>
-        {% for chat in chats %}
-        <div class="chat">
-            <p>{{ chat.data }}</p>
-            {% if chat.img_path %}
-            <img src="{{ url_for('static', filename=chat.img_path) }}" alt="Chat Image">
-            {% endif %}
-        </div>
-        {% endfor %}
+
     </section>
 </main>
 
