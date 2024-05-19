@@ -65,3 +65,21 @@ def edit_chat(chat_id):
 
     form.data.data = chat.data
     return render_template('edit_chat.html', form=form)
+
+
+""" @flaskApp.route('/')
+def index():
+    tags = db.session.query(movie.tag).distinct().all()
+    movies = movie.query.all()
+    return render_template('original.html', movies=movies, tags=tags)
+
+@flaskApp.route('/moviedetails/<name>')
+def moviedetails(name):
+    # Query the movie by its name
+    movieD = movie.query.filter_by(name=name).first_or_404()  # This will return 404 if no movie is found
+    return render_template('moviedetails.html', movieD=movieD)
+
+@flaskApp.route('/movietag/<tag>')
+def movietag(tag):
+    movieT = movie.query.filter_by(tag=tag).all()  # Fetch all movies with the given tag
+    return render_template('movietag.html', movieT=movieT) """
