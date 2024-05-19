@@ -83,30 +83,6 @@ Welcome to FilmArt
                 {% endif %}
             {% endwith %}
 
-            <!-- Chat Form -->
-            <form method="POST" enctype="multipart/form-data">
-                {{ form.hidden_tag() }}
-                <div class="form-group">
-                    {{ form.data.label }} <br>
-                    {{ form.data(class='form-control') }}
-                    {% if form.data.errors %}
-                        {% for error in form.data.errors %}
-                            <div class="alert alert-danger">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                </div><br>
-                <div class="form-group">
-                    {{ form.img.label }} <br>
-                    {{ form.img(class='form-control-file') }}
-                    {% if form.img.errors %}
-                        {% for error in form.img.errors %}
-                            <div class="alert alert-danger">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                </div><br>
-                <button type="submit" class="btn btn-primary">Add Chat</button>
-            </form>
-        </section>
 
         <section class="chats">
             <h2>Your Chats</h2>
