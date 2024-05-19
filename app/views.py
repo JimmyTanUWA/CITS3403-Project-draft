@@ -1,10 +1,11 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
-from .models import Chat
-from .forms import ChatForm
+from .models import Chat, User
+from .forms import ChatForm, ChangeInfoForm
 from . import db
 import os
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash
 
 views = Blueprint('views', __name__)
 
@@ -29,7 +30,8 @@ def home():
             return redirect(url_for('views.home'))
 
     chats = Chat.query.filter_by(user_id=current_user.id).all()
-    return render_template("home.html", user=current_user, form=form, chats=chats)
+    return render_template("start.html", user=current_user, form=form, chats=chats)
+
 
 @views.route('/delete-chat', methods=['POST'])
 @login_required
@@ -66,6 +68,51 @@ def edit_chat(chat_id):
     form.data.data = chat.data
     return render_template('edit_chat.html', form=form)
 
+@views.route('/change-info', methods=['GET', 'POST'])
+@login_required
+def change_info():
+    form = ChangeInfoForm()
+    if form.validate_on_submit():
+        user_by_email = User.query.filter_by(email=form.email.data).first()
+        user_by_username = User.query.filter_by(username=form.username.data).first()
+        
+        if user_by_email and user_by_email.id != current_user.id:
+            flash('Email already exists.', category='error')
+        elif user_by_username and user_by_username.id != current_user.id:
+            flash('Username already exists.', category='error')
+        else:
+            try:
+                current_user.username = form.username.data
+                current_user.email = form.email.data
+                current_user.password = generate_password_hash(form.password.data, method='sha256')
+                db.session.commit()
+                flash('Information updated successfully!', category='success')
+                return redirect(url_for('views.profile'))
+            except Exception as e:
+                db.session.rollback()
+                flash('An error occurred while updating your information. Please try again.', category='error')    
+
+    return render_template('profile.html', form=form)
+
+
+@views.route('/<username>')
+@login_required
+def profile(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    posts_count = Chat.query.filter_by(user_id=user.id).count()
+    followers_count = 0  # Replace with actual follower count logic
+    following_count = 0  # Replace with actual following count logic
+    posts = Chat.query.filter_by(user_id=user.id).all()
+    
+    form = ChangeInfoForm()
+
+    return render_template('profile.html', 
+                           user=user, 
+                           posts_count=posts_count, 
+                           followers_count=followers_count, 
+                           following_count=following_count,
+                           posts=posts,
+                           form=form)
 
 """ @flaskApp.route('/')
 def index():

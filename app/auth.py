@@ -28,20 +28,35 @@ def logout():
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
+    if current_user.is_authenticated:
+        return redirect(url_for('start'))        
     form = SignUpForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user:
-            flash('Email already exists.', category='error')
+    if request.method == 'POST':
+        if not form.validate_on_submit():
+            flash('Form validation failed. Please check the errors below and try again.', category='error')
+            return render_template('signup.html', form=form)
+
+        user_by_email = User.query.filter_by(email=form.email.data).first()
+        user_by_username = User.query.filter_by(username=form.username.data).first()
+        if user_by_email:
+            flash('Email already exists. Please use a different email.', category='error')
+        elif user_by_username:
+            flash('Username already exists. Please choose a different username.', category='error')
         else:
-            new_user = User(
-                email=form.email.data,
-                username=form.username.data,
-                password=generate_password_hash(form.password.data, method='sha256')
-            )
-            db.session.add(new_user)
-            db.session.commit()
-            login_user(new_user, remember=True)
-            flash('Account created!', category='success')
-            return redirect(url_for('views.home'))
+            try:
+                new_user = User(
+                    email=form.email.data,
+                    username=form.username.data,
+                    password=generate_password_hash(form.password.data, method='sha256')
+                )
+                db.session.add(new_user)
+                db.session.commit()
+                login_user(new_user, remember=True)
+                flash('Account created successfully! Welcome to FilmArt.', category='success')
+                return redirect(url_for('views.home'))
+            except Exception as e:
+                db.session.rollback()
+                flash('An error occurred while creating your account. Please try again.', category='error')
+    
     return render_template('signup.html', form=form)
+

@@ -1,37 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In - ChatWithUs</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        body {
-            display: none;
-        }
-    </style>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('body').fadeIn(800); // Slow fade in effect over 3 seconds
-        });
-    </script>
-</head>
-<body>
-    <header>
-        <h1>Sign In to Your ChatWithUs Account</h1>
-        <p>Access your personal space and connect with others!</p>
-    </header>
-    <section>
-        <form id="signInForm">
-            <input type="email" placeholder="Email" required><br>
-            <input type="password" placeholder="Password" required><br>
-            <button type="submit">Sign In</button>
-        </form>
-        <div class="forgot-password">
-            <a href="#" id="forgotPassword">Forgot Password?</a>
+{% extends "base.html" %}
+
+{% block title %}
+Sign In - FilmArt
+{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Sign In to Your FilmArt Account</h1>
+    <p>Access your personal space and connect with others!</p>
+</header>
+<section>
+    <!-- Display Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Form for SignIn -->
+    <form id="signInForm" method="post" action="{{ url_for('auth.login') }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.email.label }} <br>
+            {{ form.email(class='form-control') }}
+            {% if form.email.errors %}
+                {% for error in form.email.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div><br>
+        <div class="form-group">
+            {{ form.password.label }} <br>
+            {{ form.password(class='form-control') }}
+            {% if form.password.errors %}
+                {% for error in form.password.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div><br>
+        <div class="form-group form-check">f@gmail.com
+            {{ form.remember_me(class='form-check-input') }}
+            {{ form.remember_me.label(class='form-check-label') }}
+        </div><br>
+        <!-- Render the submit button -->
+        <div class="form-group">
+            {{ form.submit(class='btn btn-primary') }}
         </div>
-    </section>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
-</html>
+    </form>
+    <div class="forgot-password">
+        <a href="#" id="forgotPassword">Forgot Password?</a>
+    </div>
+    <!-- Add Sign Up button here -->
+    <div class="signup">
+        <p>Don't have an account? <a href="{{ url_for('auth.sign_up') }}" class="btn btn-secondary">Sign Up</a></p>
+    </div>
+</section>
+{% endblock %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('body').fadeIn(800); // Slow fade-in effect over 800 milliseconds
+    });
+</script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}

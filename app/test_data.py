@@ -49,6 +49,11 @@ harry1=movie(name="Harry Potter and the Sorcerer's Stone", tag="adventure", addr
 harry2=movie(name="Harry Potter and the Chamber of Secrets", tag="adventure", address="https://media.themoviedb.org/t/p/w440_and_h660_face/sdEOH0992YZ0QSxgXNIGLq1ToUi.jpg",
              rating="7.4/10", release_date="November 15, 2002", runtime="161 minutes",
              plot="Harry returns to Hogwarts for his second year and discovers a hidden chamber within the school that holds dark secrets. With Hermione Granger and Ron Weasley by his side, Harry investigates the chamber to confront the malevolent presence endangering Hogwarts. Through bravery and friendship, Harry uncovers the truth and faces the challenges posed by the Chamber of Secrets.")
-db.session.add(harry2)
-db.session.commit()
 
+movie_list = [shining, spirited, lala, budapest, ring2, totoro, gone, home, dune, phantom, smith, kill, shawshank, gump, harry1, harry2]
+
+# Adding each movie to the session and committing
+for movie_instance in movie_list:
+    db.session.add(movie_instance)
+
+db.session.commit()
