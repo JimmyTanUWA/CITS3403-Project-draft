@@ -1,10 +1,17 @@
 # Byte-compiled / optimized / DLL files
+*.pyc
 __pycache__/
 *.py[cod]
 *$py.class
 
+#ignore testing environment 
+.flaskenv
+
 # C extensions
 *.so
+
+#Config file
+app.config
 
 # Distribution / packaging
 .Python

@@ -15,7 +15,7 @@
             <div class="col-md-6">
                 <!-- Movie details -->
                 <h1>{{ movieD.name }}</h1>
-                <p class="text-muted"><strong>tag:</strong> {{ movieD.tag }}</p>
+                <p class="text-muted"><strong>Tag:</strong> {{ movieD.tag }}</p>
                 <p><strong>Plot:</strong> {{ movieD.plot }}</p>
                 <p><strong>Rating:</strong> {{ movieD.rating }}</p>
                 <p><strong>Release Date:</strong> {{ movieD.release_date }}</p>
@@ -26,20 +26,34 @@
         <div class="row mt-4">
             <div class="col-12">
                 <h2>Leave a Comment</h2>
-                <form action="/submit_comment" method="POST">
-                    <div class="mb-3">
-                        <textarea class="form-control" name="comment" rows="3" required placeholder="Your comment here..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit Comment</button>
-                </form>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentModal">
+                    Submit Comment
+                </button>
             </div>
         </div>
     </div>
+
+    <!-- Comment Modal -->
+    <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="commentModalLabel">Add a Comment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="commentForm" action="/submit_comment" method="POST">
+                        <div class="mb-3">
+                            <textarea class="form-control" name="comment" rows="3" required placeholder="Your comment here..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Comment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
-
-
-
-

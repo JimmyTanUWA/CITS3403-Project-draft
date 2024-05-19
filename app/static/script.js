@@ -1,4 +1,4 @@
-$(document).ready(function() {
+/* $(document).ready(function() {
     // Fade-in 效果
     $('body').fadeIn(800);
 
@@ -61,3 +61,4 @@ $(document).ready(function() {
         window.location.href = "signin"; // 使用变量跳转到登录页面
     });
 });
+ */

@@ -1,85 +1,75 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
-from .models import Chat
-from .forms import ChatForm
+from .models import Chat, User, Movie
+from .forms import ChatForm, ChangeInfoForm, SignUpForm
 from . import db
 import os
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash
 
 views = Blueprint('views', __name__)
 
-@views.route('/', methods=['GET', 'POST'])
+@views.route('/')
 @login_required
 def home():
-    form = ChatForm()
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            image_file = form.img.data
-            if image_file:
-                filename = secure_filename(image_file.filename)
-                img_path = os.path.join('static/uploads', filename)
-                image_file.save(img_path)
-            else:
-                img_path = None
+    tags = db.session.query(Movie.tag).distinct().all()
+    movies = Movie.query.all()
+    return render_template('start.html', movies=movies, tags=tags)
 
-            new_chat = Chat(data=form.data.data, img_path=img_path, user_id=current_user.id)
-            db.session.add(new_chat)
-            db.session.commit()
-            flash('Chat added!', category='success')
-            return redirect(url_for('views.home'))
-
-    chats = Chat.query.filter_by(user_id=current_user.id).all()
-    return render_template("home.html", user=current_user, form=form, chats=chats)
-
-@views.route('/delete-chat', methods=['POST'])
+@views.route('/moviedetails/<name>')
 @login_required
-def delete_chat():
-    chat_id = request.json.get('chatId')
-    chat = Chat.query.get(chat_id)
-    if chat and chat.user_id == current_user.id:
-        db.session.delete(chat)
-        db.session.commit()
-        return jsonify({'success': True}), 200
-    return jsonify({'error': 'Chat not found or unauthorized'}), 404
-
-@views.route('/edit-chat/<int:chat_id>', methods=['GET', 'POST'])
-@login_required
-def edit_chat(chat_id):
-    chat = Chat.query.get_or_404(chat_id)
-    if chat.user_id != current_user.id:
-        flash('Unauthorized action.', category='error')
-        return redirect(url_for('views.home'))
-
-    form = ChatForm()
-    if request.method == 'POST' and form.validate_on_submit():
-        chat.data = form.data.data
-        image_file = form.img.data
-        if image_file:
-            filename = secure_filename(image_file.filename)
-            img_path = os.path.join('static/uploads', filename)
-            image_file.save(img_path)
-            chat.img_path = img_path
-        db.session.commit()
-        flash('Chat updated!', category='success')
-        return redirect(url_for('views.home'))
-
-    form.data.data = chat.data
-    return render_template('edit_chat.html', form=form)
-
-
-""" @flaskApp.route('/')
-def index():
-    tags = db.session.query(movie.tag).distinct().all()
-    movies = movie.query.all()
-    return render_template('original.html', movies=movies, tags=tags)
-
-@flaskApp.route('/moviedetails/<name>')
 def moviedetails(name):
     # Query the movie by its name
-    movieD = movie.query.filter_by(name=name).first_or_404()  # This will return 404 if no movie is found
+    movieD = Movie.query.filter_by(name=name).first_or_404()  # This will return 404 if no movie is found
     return render_template('moviedetails.html', movieD=movieD)
 
-@flaskApp.route('/movietag/<tag>')
+@views.route('/movietag/<tag>')
+@login_required
 def movietag(tag):
-    movieT = movie.query.filter_by(tag=tag).all()  # Fetch all movies with the given tag
-    return render_template('movietag.html', movieT=movieT) """
+    movieT = Movie.query.filter_by(tag=tag).all()  # Fetch all movies with the given tag
+    return render_template('movietag.html', movieT=movieT)
+
+@views.route('/start')
+@login_required
+def start():
+    return render_template('start.html')
+
+@views.route('/search')
+@login_required
+def search():
+    query = request.args.get('query', '')  # Get the query from URL parameters
+    if query:
+        movieSS = Movie.query.filter(Movie.name.ilike(f'%{query}%')).all()  # Search for movies with names that contain the query
+    else:
+        movieSS = []
+    return render_template('search.html', movieSS=movieSS)  # Assuming you have a template for displaying results
+
+@views.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        form = SignUpForm()
+        if not form.validate_on_submit():
+            flash('Form validation failed. Please check the errors below and try again.', category='error')
+            return render_template('profile.html', user=current_user, form=form)
+        
+        user_by_email = User.query.filter_by(email=form.email.data).first()
+        user_by_username = User.query.filter_by(username=form.username.data).first()
+        if user_by_email and user_by_email.id != current_user.id:
+            flash('Email already exists. Please use a different email.', category='error')
+        elif user_by_username and user_by_username.id != current_user.id:
+            flash('Username already exists. Please choose a different username.', category='error')
+        else:
+            try:
+                current_user.email = form.email.data
+                current_user.username = form.username.data
+                if form.password.data:
+                    current_user.password = generate_password_hash(form.password.data, method='sha256')
+                db.session.commit()
+                flash('Profile updated successfully!', category='success')
+            except Exception as e:
+                db.session.rollback()
+                flash('An error occurred while updating your profile. Please try again.', category='error')
+    
+    form = SignUpForm(obj=current_user)
+    return render_template('profile.html', user=current_user, form=form)

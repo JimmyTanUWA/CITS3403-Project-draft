@@ -10,12 +10,10 @@
         <h1>{{ movieT[0]['tags'] }}</h1>
         <div class="movie-grid">
             {% for movie in movieT %}
-            <div class="movie-item">
-                <a href="{{ url_for('moviedetails', name=movie.name) }}">
-                    <img src="{{ movie.address }}" alt="{{ movie.name }}">
-                    <div class="movie-name">{{ movie.name }}</div>
-                </a>
-            </div>
+            <li class="list-group-item">
+                <a href="{{ url_for('views.moviedetails', name=movie.name) }}"><strong>{{ movie.name }}</strong></a>
+                <img src="{{ movie.address }}" alt="Movie Image" style="height: 100px;">
+            </li>
             {% endfor %}
         </div>
         <div class="next-button-container">
