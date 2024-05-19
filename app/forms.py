@@ -63,3 +63,8 @@ class ChangeInfoForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('That email is already registered.')
+            
+            #TODO edit profile
+            #TODO ability to comment on movies
+            #TODO add some bottom page functionality
+            #TODO change all inconsistent naming

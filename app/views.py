@@ -21,7 +21,7 @@ def home():
 def moviedetails(name):
     # Query the movie by its name
     movieD = Movie.query.filter_by(name=name).first_or_404()  # This will return 404 if no movie is found
-    return render_template('views.moviedetails.html', movieD=movieD)
+    return render_template('moviedetails.html', movieD=movieD)
 
 @views.route('/movietag/<tag>')
 @login_required

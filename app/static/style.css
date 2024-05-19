@@ -60,7 +60,7 @@ button:hover {
 .movie-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem; /* Space between movie items */
+    gap: 0.8rem; /* Space between movie items */
     justify-content: center;
 }
 
@@ -69,12 +69,12 @@ button:hover {
     border-radius: 8px; /* Rounded corners */
     padding: 0.5rem; /* Padding around content */
     text-align: center; /* Center the text */
-    width: 150px; /* Set a fixed width for consistency */
+    width: 200px; /* Set a fixed width for consistency */
 }
 
 .movie-item img.movie-img {
     max-width: 100%; /* Make sure the image fits within the item */
-    width: 500px; /* Set a fixed width of 500px */
+    width: 350px; /* Set a smaller fixed width */
     height: auto; /* Maintain aspect ratio */
     border-radius: 4px; /* Slight rounding on image corners */
 }

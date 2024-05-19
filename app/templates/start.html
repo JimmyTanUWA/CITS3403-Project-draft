@@ -5,121 +5,114 @@ Welcome to FilmArt
 {% endblock %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>FilmArt</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='original.css') }}">
-</head>
-<body>
-    <!-- Top ad start -->
-    <div class="header">
-        <a href="#">
-            <img src="{{ url_for('static', filename='top.jpg') }}" alt="ad">
-        </a>
+<div class="header">
+    <a href="#">
+        <img src="{{ url_for('static', filename='top.jpg') }}" alt="ad">
+    </a>
+</div>
+
+<div class="black-nav">
+    <div class="wrap"></div>
+</div>
+
+<div class="white-nav">
+    <div class="logo">
+        <h1>Blink</h1>
     </div>
-    <!-- Top ad end -->
-    <div class="black-nav">
-        <div class="wrap"></div>
+    <div class="Search">
+        <form action="search" method="GET">
+            <input type="text" name="query" placeholder="Search...">
+            <button type="submit">Search</button>
+        </form>
+        <a href="{{ url_for('views.profile', username=current_user.username) }}" class="btn btn-primary">Profile</a>
+        <button id="signUpBtn" class="btn btn-primary">Sign Up</button>
+        <button id="signInBtn" class="btn btn-secondary">Sign In</button>
     </div>
-    <div class="white-nav">
-        <div class="logo">
-            <h1>Blink</h1>
-        </div>
-        <div class="Search">
-            <form action="search" method="GET">
-                <input type="text" name="query" placeholder="Search...">
-                <button type="submit">Search</button>
-            </form>
-            <a href="{{ url_for('views.profile', username=current_user.username) }}" class="btn btn-primary">Profile</a>
-            <button id="signUpBtn" class="btn btn-primary">Sign Up</button>
-            <button id="signInBtn" class="btn btn-secondary">Sign In</button>
-        </div>
-    </div>
-    <main class="main-content">
-        <div class="banner">
-            <div class="wrap">
-                <div class="slide">
-                    <ul>
-                        <li><h2>Category</h2></li>
-                        <li><a href="#" data-content="home">HomePage</a></li>
-                        {% for tag in tags %}
-                        <li><a href="{{ url_for('views.movietag', tag=tag[0]) }}" data-content="{{ tag[0] }}"><strong>{{ tag[0] }}</strong></a></li>
-                        {% endfor %}
-                        <li><a href="#">Posts</a></li>
-                    </ul>
-                </div>
-                <div class="container mt-5">
-                    <h1>Movielist</h1>
-                    <div class="movie-grid">
-                        {% for movie in movies %}
-                        <div class="movie-item">
-                            {% if movie.address %}
-                            <img src="{{ movie.address }}" alt="{{movie.name}}">
-                            {% endif %}
-                            <a href="{{ url_for('views.moviedetails', name=movie.name) }}"><strong>{{ movie.name }}</strong></a>
-                        </div>
-                        {% else %}
-                        <div class="movie-item">No movie found.</div>
-                        {% endfor %}
-                    </div>
-                    <div class="navigation-buttons">
-                        <button id="prev-button" >Previous</button>
-                        <button id="next-button" >Next</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <section>
-            <!-- Display Flash Messages -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
-                            {{ message }}
-                        </div>
+</div>
+
+<main class="main-content">
+    <div class="banner">
+        <div class="wrap">
+            <div class="slide">
+                <ul>
+                    <li><h2>Category</h2></li>
+                    <li><a href="#" data-content="home">HomePage</a></li>
+                    {% for tag in tags %}
+                    <li><a href="{{ url_for('views.movietag', tag=tag[0]) }}" data-content="{{ tag[0] }}"><strong>{{ tag[0] }}</strong></a></li>
                     {% endfor %}
-                {% endif %}
-            {% endwith %}
-
-
-        <section class="chats">
-            <h2>Your Chats</h2>
-            {% for chat in chats %}
-                <div class="chat">
-                    <p>{{ chat.data }}</p>
-                    {% if chat.img_path %}
-                        <img src="{{ url_for('static', filename=chat.img_path) }}" alt="Chat Image">
-                    {% endif %}
+                    <li><a href="#">Posts</a></li>
+                </ul>
+            </div>
+            <div class="container mt-5">
+                <h1>Movielist</h1>
+                <div class="movie-grid">
+                    {% for movie in movies %}
+                    <div class="movie-item">
+                        {% if movie.address %}
+                        <img src="{{ movie.address }}" alt="{{ movie.name }}" class="movie-img">
+                        {% endif %}
+                        <a href="{{ url_for('views.moviedetails', name=movie.name) }}"><strong>{{ movie.name }}</strong></a>
+                    </div>
+                    {% else %}
+                    <div class="movie-item">No movie found.</div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
-        </section>
-    </main>
-    <!-- Footer -->
-    <footer class="site-footer">
-        <div class="footer-container">
-            <div class="footer-contact">
-                <h3>Contact Us</h3>
-                <p>Email: 23600251@student.uwa.edu.com</p>
-                <p>Phone: +61404160536</p>
-            </div>
-            <div class="footer-address">
-               <h3>Address</h3>
-               <p>35 Stirling Hwy</p>
-               <p>Crawley WA 6009</p>
-               <p>Australia</p>
-            </div>
-            <div class="footer-service">
-               <h3>Services</h3>
-               <p>Help center</p>
-               <p>Feedback</p>
-               <p>Investor Relations</p>
+                <div class="navigation-buttons">
+                    <button id="prev-button">Previous</button>
+                    <button id="next-button">Next</button>
+                </div>
             </div>
         </div>
-    </footer>
-</body>
-</html>
+    </div>
+
+    <section>
+        <!-- Display Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </section>
+
+    <section class="chats">
+        <h2>Your Chats</h2>
+        {% for chat in chats %}
+        <div class="chat">
+            <p>{{ chat.data }}</p>
+            {% if chat.img_path %}
+            <img src="{{ url_for('static', filename=chat.img_path) }}" alt="Chat Image">
+            {% endif %}
+        </div>
+        {% endfor %}
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="site-footer">
+    <div class="footer-container">
+        <div class="footer-contact">
+            <h3>Contact Us</h3>
+            <p>Email: 23600251@student.uwa.edu.com</p>
+            <p>Phone: +61404160536</p>
+        </div>
+        <div class="footer-address">
+            <h3>Address</h3>
+            <p>35 Stirling Hwy</p>
+            <p>Crawley WA 6009</p>
+            <p>Australia</p>
+        </div>
+        <div class="footer-service">
+            <h3>Services</h3>
+            <p>Help center</p>
+            <p>Feedback</p>
+            <p>Investor Relations</p>
+        </div>
+    </div>
+</footer>
 {% endblock %}
 
 {% block javascript %}
