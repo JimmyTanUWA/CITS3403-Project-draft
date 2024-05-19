@@ -8,7 +8,7 @@ __pycache__/
 *.so
 
 #Config file
-
+app.config
 
 # Distribution / packaging
 .Python
