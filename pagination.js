@@ -53,4 +53,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Show the first page initially
     showPage(currentPage);
+});
 

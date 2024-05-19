@@ -58,3 +58,4 @@ movie_list = [shining, spirited, lala, budapest, ring2, totoro, gone, home, dune
 with app.app_context():
     db.session.add_all(movie_list)
     db.session.commit()
+
