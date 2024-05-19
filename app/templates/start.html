@@ -45,7 +45,7 @@ Welcome to FilmArt
                         <li><h2>Category</h2></li>
                         <li><a href="#" data-content="home">HomePage</a></li>
                         {% for tag in tags %}
-                        <li><a href="{{ url_for('movietag', tag=tag[0]) }}" data-content="{{ tag[0] }}"><strong>{{ tag[0] }}</strong></a></li>
+                        <li><a href="{{ url_for('views.movietag', tag=tag[0]) }}" data-content="{{ tag[0] }}"><strong>{{ tag[0] }}</strong></a></li>
                         {% endfor %}
                         <li><a href="#">Posts</a></li>
                     </ul>
@@ -58,7 +58,7 @@ Welcome to FilmArt
                             {% if movie.address %}
                             <img src="{{ movie.address }}" alt="{{movie.name}}">
                             {% endif %}
-                            <a href="{{ url_for('moviedetails', name=movie.name) }}"><strong>{{ movie.name }}</strong></a>
+                            <a href="{{ url_for('views.moviedetails', name=movie.name) }}"><strong>{{ movie.name }}</strong></a>
                         </div>
                         {% else %}
                         <div class="movie-item">No movie found.</div>

@@ -34,7 +34,7 @@ User Profile
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="changeInfoForm" method="post" action="{{ url_for('views.change_info') }}">
+                <form id="changeInfoForm" method="post" action="{{ url_for('views.profile') }}">
                     {{ form.hidden_tag() }}
                     <div class="form-group">
                         {{ form.username.label }}<br>

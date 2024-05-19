@@ -11,7 +11,7 @@
         <ul class="list-group">
             {% for movie in movieT %}
             <li class="list-group-item">
-                <a href="{{ url_for('moviedetails', name=movie.name) }}"><strong>{{ movie.name }}</strong></a>
+                <a href="{{ url_for('views.moviedetails', name=movie.name) }}"><strong>{{ movie.name }}</strong></a>
                 <img src="{{ movie.address }}" alt="Movie Image" style="height: 100px;">
             </li>
             {% endfor %}
