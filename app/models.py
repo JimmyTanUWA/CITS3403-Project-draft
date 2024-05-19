@@ -40,20 +40,5 @@ class Chat(db.Model):
     def __repr__(self):
         return f'<Chat {self.id}>'
 
-#class User(db.Model):
-    #id = db.Column(db.Integer, primary_key=True)
-    #username = db.Column(db.String(100), nullable=False)
-    #password = db.Column(db.String(100), nullable=False)
 
-#def generate_unique_id():
-    #while True:
-        #potential_id = random.randint(100000000, 999999999)
-        #if not User.query.filter_by(id=potential_id).first():
-            #return potential_id
-
-#class Comment(db.Model):
-    #user_name = db.Column(db.String(20), db.ForeignKey('user.name'), nullable=False)
-    #content = db.Column(db.Text, nullable=False)
-    #date_posted = db.Column(db.DateTime, default=datetime.utcnow)
-    #user = db.relationship('User', backref=db.backref('comments', lazy=True))
 
