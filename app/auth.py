@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
-from .forms import SignInForm, SignUpForm, ChangeInfoForm
+from .forms import SignInForm, SignUpForm, ChangeUsernameEmailForm
 from . import db
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
@@ -71,7 +71,7 @@ def sign_out():
 @auth.route('/update_profile', methods=['POST'])
 @login_required
 def update_profile():
-    form = ChangeInfoForm()
+    form = ChangeUsernameEmailForm()
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.email = form.email.data

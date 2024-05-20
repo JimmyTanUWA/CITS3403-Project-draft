@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from .models import Chat, User, Movie
-from .forms import ChatForm, ChangeInfoForm, SignUpForm
+from .forms import ChatForm, ChangeUsernameEmailForm, SignUpForm, ChangePasswordForm
 from . import db
 import os
 from werkzeug.utils import secure_filename
@@ -50,16 +50,26 @@ def delete_comment(chat_id):
 @login_required
 def like_comment(chat_id):
     chat = Chat.query.get_or_404(chat_id)
-    if chat_id in current_user.liked_chats:
-        current_user.liked_chats.remove(chat_id)
+    user = User.query.get(current_user.id)
+    
+    if chat_id in user.liked_chats:
         chat.likes -= 1
+        user.liked_chats.remove(chat_id)
+        flash(f'Removed like from chat {chat_id}', category='info')
     else:
-        if chat_id in current_user.disliked_chats:
-            current_user.disliked_chats.remove(chat_id)
+        if chat_id in user.disliked_chats:
             chat.dislikes -= 1
-        current_user.liked_chats.append(chat_id)
+            user.disliked_chats.remove(chat_id)
         chat.likes += 1
+        user.liked_chats.append(chat_id)
+        flash(f'Liked chat {chat_id}', category='info')
+    
     db.session.commit()
+    
+    # Flash the updated lists for debugging
+    flash(f'Liked chats after update: {user.liked_chats}', category='info')
+    flash(f'Disliked chats after update: {user.disliked_chats}', category='info')
+
     return redirect(url_for('views.moviedetails', name=chat.movie_name))
 
 @views.route('/dislike_comment/<int:chat_id>', methods=['POST'])
@@ -95,15 +105,21 @@ def search():
         movieSS = []
     return render_template('search.html', movieSS=movieSS)  # Assuming you have a template for displaying results
 
-@views.route('/profile', methods=['GET', 'POST'])
+@views.route('/profile', methods=['GET'])
 @login_required
 def profile():
-    if request.method == 'POST':
-        form = ChangeInfoForm()
-        if not form.validate_on_submit():
-            flash('Form validation failed. Please check the errors below and try again.', category='error')
-            return render_template('profile.html', user=current_user, form=form)
-        
+    name_email_form = ChangeUsernameEmailForm(obj=current_user)
+    pw_form = ChangePasswordForm()
+    liked_chats = Chat.query.filter(Chat.id.in_(current_user.liked_chats)).all() if current_user.liked_chats else []
+    disliked_chats = Chat.query.filter(Chat.id.in_(current_user.disliked_chats)).all() if current_user.disliked_chats else []
+
+    return render_template('profile.html', user=current_user, name_email_form=name_email_form, pw_form=pw_form, liked_chats=liked_chats, disliked_chats=disliked_chats)
+
+@views.route('/profile-namechange', methods=['POST'])
+@login_required
+def update_name_email():
+    form = ChangeUsernameEmailForm()
+    if form.validate_on_submit():
         user_by_email = User.query.filter_by(email=form.email.data).first()
         user_by_username = User.query.filter_by(username=form.username.data).first()
         if user_by_email and user_by_email.id != current_user.id:
@@ -114,13 +130,29 @@ def profile():
             try:
                 current_user.email = form.email.data
                 current_user.username = form.username.data
-                if form.password.data:
-                    current_user.password = generate_password_hash(form.password.data)
                 db.session.commit()
                 flash('Profile updated successfully!', category='success')
             except Exception as e:
                 db.session.rollback()
                 flash('An error occurred while updating your profile. Please try again.', category='error')
-    
-    form = ChangeInfoForm(obj=current_user)
-    return render_template('profile.html', user=current_user, form=form)
+    else:
+        flash('Form validation failed. Please check the errors below and try again.', category='error')
+
+    return redirect(url_for('views.profile'))
+
+@views.route('/profile-pwchange', methods=['POST'])
+@login_required
+def update_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        try:
+            current_user.password = generate_password_hash(form.password.data)
+            db.session.commit()
+            flash('Password updated successfully!', category='success')
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while updating your password. Please try again.', category='error')
+    else:
+        flash('Form validation failed. Please check the errors below and try again.', category='error')
+
+    return redirect(url_for('views.profile'))
