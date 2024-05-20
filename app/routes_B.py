@@ -1,6 +1,6 @@
 from app import flaskApp, db
 from flask import render_template, redirect, url_for, request, jsonify
-from app.model_movie import movie, user
+from app.model_movie import movie
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
@@ -10,11 +10,11 @@ def index():
     movies = movie.query.all()
     return render_template('original.html', movies=movies, tags=tags)
 
-#@flaskApp.route('/moviedetails/<name>')
-#def moviedetails(name):
+@flaskApp.route('/moviedetails/<name>')
+def moviedetails(name):
     # Query the movie by its name
-    #movieD = movie.query.filter_by(name=name).first_or_404()  # This will return 404 if no movie is found
-    #return render_template('moviedetails.html', movieD=movieD)
+    movieD = movie.query.filter_by(name=name).first_or_404()  # This will return 404 if no movie is found
+    return render_template('moviedetails.html', movieD=movieD)
 
 @flaskApp.route('/movietag/<tag>')
 def movietag(tag):
@@ -54,22 +54,8 @@ def profile():
     user = user.query.first()
     return render_template('profile.html', user=user)
 
-@flaskApp.route('/moviedetails/<name>')
-def moviedetails(name):
-    movieD = movie.query.filter_by(name=name).first_or_404()
-    return render_template('moviedetails.html', movieD=movieD)
 
-#@flaskApp.route('/upload', methods=['POST'])
-#def upload():
-    #if 'file' not in request.files:
-        ##file = request.files['file']
-    #if file.filename == '':
-        #return redirect(request.url)
-    #if file:
-        #filename = secure_filename(file.filename)
-        #file.save(os.path.join(flaskApp.config['UPLOAD_FOLDER'], filename))
-        ##user.profile_image = filename
-        ##return redirect(url_for('profile'))
+
 
 
 
