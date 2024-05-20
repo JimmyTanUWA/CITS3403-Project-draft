@@ -50,17 +50,7 @@ def profile():
     user = user.query.first()
     return render_template('profile.html', user=user)
 
-#@flaskApp.route('/upload', methods=['POST'])
-#def upload():
-    #if 'file' not in request.files:
-        ##file = request.files['file']
-    #if file.filename == '':
-        #return redirect(request.url)
-    #if file:
-        #filename = secure_filename(file.filename)
-        #file.save(os.path.join(flaskApp.config['UPLOAD_FOLDER'], filename))
-        ##user.profile_image = filename
-        ##return redirect(url_for('profile'))
+
 
 
 
