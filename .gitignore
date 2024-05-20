@@ -4,14 +4,14 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+#project files
+*.db
+
 #ignore testing environment 
 .flaskenv
 
 # C extensions
 *.so
-
-#Config file
-app.config
 
 # Distribution / packaging
 .Python
