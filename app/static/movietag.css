@@ -51,7 +51,7 @@ h1 {
     margin-top: 20px;
 }
 
-.next-button {
+.prev-button, .next-button {
     padding: 10px 20px;
     font-size: 16px;
     color: #fff;
@@ -62,7 +62,7 @@ h1 {
     position: relative;
 }
 
-.next-button:hover {
+.prev-button:hover, .next-button:hover {
     background-color: #0056b3;
 }
 

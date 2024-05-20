@@ -5,8 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentPage = 1;
 
     const movies = document.querySelectorAll(".movie-item");
-    const prevButton = document.getElementById("prev-button");
-    const nextButton = document.getElementById("next-button");
+    const prevButton = document.querySelector(".prev-button");
+    const nextButton = document.querySelector(".next-button");
 
     if (!movies.length) {
         console.error("No movie items found");
@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     prevButton.addEventListener("click", () => {
+        console.log("Prev button clicked");
         if (currentPage > 1) {
             currentPage--;
             showPage(currentPage);
@@ -45,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     nextButton.addEventListener("click", () => {
+        console.log("Next button clicked");
         if (currentPage < Math.ceil(movies.length / moviesPerPage)) {
             currentPage++;
             showPage(currentPage);
