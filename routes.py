@@ -21,21 +21,6 @@ def movietag(tag):
     movieT = movie.query.filter_by(tag=tag).all()  # Fetch all movies with the given tag
     return render_template('movietag.html', movieT=movieT)
 
-@flaskApp.route('/signup', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']  # In a real app, you should hash this password!
-
-        # Create a new user instance and add it to the database
-        new_user = user(username=username, email=email, password=password)
-        db.session.add(new_user)
-        db.session.commit()
-
-        return redirect(url_for('signin'))  # Redirect to the login page after successful signup
-    return render_template('signup.html')
-
 @flaskApp.route('/search')
 def search():
     query = request.args.get('query', '')  # Get the query from URL parameters
