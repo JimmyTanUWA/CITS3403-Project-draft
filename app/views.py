@@ -9,6 +9,7 @@ from werkzeug.security import generate_password_hash
 
 views = Blueprint('views', __name__)
 
+@views.route('/start')
 @views.route('/')
 @login_required
 def home():
@@ -16,23 +17,73 @@ def home():
     movies = Movie.query.all()
     return render_template('start.html', movies=movies, tags=tags)
 
-@views.route('/moviedetails/<name>')
-@login_required
+@views.route('/movie/<name>', methods=['GET'])
 def moviedetails(name):
-    # Query the movie by its name
-    movieD = Movie.query.filter_by(name=name).first_or_404()  # This will return 404 if no movie is found
-    return render_template('moviedetails.html', movieD=movieD)
+    movieD = Movie.query.filter_by(name=name).first_or_404()
+    chats = Chat.query.filter_by(movie_name=name).all()
+    return render_template('moviedetails.html', movieD=movieD, chats=chats)
+
+@views.route('/submit_comment/<movie_name>', methods=['POST'])
+@login_required
+def submit_comment(movie_name):
+    movie = Movie.query.filter_by(name=movie_name).first_or_404()
+    comment_data = request.form.get('comment')
+    new_chat = Chat(data=comment_data, user_id=current_user.id, movie_name=movie.name)
+    db.session.add(new_chat)
+    db.session.commit()
+    flash('Your comment has been added!', category='success')
+    return redirect(url_for('views.moviedetails', name=movie.name))
+
+@views.route('/delete_comment/<int:chat_id>', methods=['POST'])
+@login_required
+def delete_comment(chat_id):
+    chat = Chat.query.get_or_404(chat_id)
+    if chat.user_id != current_user.id:
+        flash('You are not authorized to delete this comment.', category='error')
+        return redirect(url_for('views.moviedetails', name=chat.movie_name))
+    db.session.delete(chat)
+    db.session.commit()
+    flash('Your comment has been deleted!', category='success')
+    return redirect(url_for('views.moviedetails', name=chat.movie_name))
+
+@views.route('/like_comment/<int:chat_id>', methods=['POST'])
+@login_required
+def like_comment(chat_id):
+    chat = Chat.query.get_or_404(chat_id)
+    if chat_id in current_user.liked_chats:
+        current_user.liked_chats.remove(chat_id)
+        chat.likes -= 1
+    else:
+        if chat_id in current_user.disliked_chats:
+            current_user.disliked_chats.remove(chat_id)
+            chat.dislikes -= 1
+        current_user.liked_chats.append(chat_id)
+        chat.likes += 1
+    db.session.commit()
+    return redirect(url_for('views.moviedetails', name=chat.movie_name))
+
+@views.route('/dislike_comment/<int:chat_id>', methods=['POST'])
+@login_required
+def dislike_comment(chat_id):
+    chat = Chat.query.get_or_404(chat_id)
+    if chat_id in current_user.disliked_chats:
+        current_user.disliked_chats.remove(chat_id)
+        chat.dislikes -= 1
+    else:
+        if chat_id in current_user.liked_chats:
+            current_user.liked_chats.remove(chat_id)
+            chat.likes -= 1
+        current_user.disliked_chats.append(chat_id)
+        chat.dislikes += 1
+    db.session.commit()
+    return redirect(url_for('views.moviedetails', name=chat.movie_name))
 
 @views.route('/movietag/<tag>')
 @login_required
 def movietag(tag):
     movieT = Movie.query.filter_by(tag=tag).all()  # Fetch all movies with the given tag
-    return render_template('movietag.html', movieT=movieT)
-
-@views.route('/start')
-@login_required
-def start():
-    return render_template('start.html')
+    tag = tag.capitalize()
+    return render_template('movietag.html', movieT=movieT, tag=tag)
 
 @views.route('/search')
 @login_required
@@ -48,7 +99,7 @@ def search():
 @login_required
 def profile():
     if request.method == 'POST':
-        form = SignUpForm()
+        form = ChangeInfoForm()
         if not form.validate_on_submit():
             flash('Form validation failed. Please check the errors below and try again.', category='error')
             return render_template('profile.html', user=current_user, form=form)
@@ -64,12 +115,12 @@ def profile():
                 current_user.email = form.email.data
                 current_user.username = form.username.data
                 if form.password.data:
-                    current_user.password = generate_password_hash(form.password.data, method='sha256')
+                    current_user.password = generate_password_hash(form.password.data)
                 db.session.commit()
                 flash('Profile updated successfully!', category='success')
             except Exception as e:
                 db.session.rollback()
                 flash('An error occurred while updating your profile. Please try again.', category='error')
     
-    form = SignUpForm(obj=current_user)
+    form = ChangeInfoForm(obj=current_user)
     return render_template('profile.html', user=current_user, form=form)

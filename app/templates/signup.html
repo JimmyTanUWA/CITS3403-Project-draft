@@ -70,5 +70,69 @@ Sign Up - FilmArt
 
 {% block javascript %}
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+$(document).ready(function() {
+    // Fade-in effect
+    $('body').fadeIn(800);
+
+    // Handle form submission
+    $('#signUpForm').submit(function(event) {
+        event.preventDefault(); // Prevent form default submission
+
+        // Clear previous messages
+        $('.error, .success').remove();
+
+        var email = $('input[type="email"]').val();
+        var password = $('input[type="password"]').val();
+        var hasError = false;
+
+        var emailRegex = /^[\\w-\\.]+@gmail\\.com$/; // Validate only Gmail addresses
+        var passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[a-zA-Z\\d!@#$%^&*]{6,}$/; // Password validation
+
+        // Email validation
+        if (!emailRegex.test(email)) {
+            $('<span class="error">Email must be a valid Gmail address.</span>')
+                .css({ color: 'red', marginLeft: '10px' })
+                .insertAfter('input[type="email"]');
+            hasError = true;
+        }
+
+        // Password validation
+        if (!passwordRegex.test(password)) {
+            $('<span class="error">Password must be at least 6 characters, include one uppercase, and one special character.</span>')
+                .css({ color: 'red', marginLeft: '10px' })
+                .insertAfter('input[type="password"]');
+            hasError = true;
+        }
+
+        // If no errors, handle redirect
+        if (!hasError) {
+            let countdown = 2; // Countdown duration (seconds)
+            $('<span class="success">✔ Signup successful! Redirecting in ' + countdown + ' seconds...</span>')
+                .css({ color: 'green', marginLeft: '10px' })
+                .insertAfter('#signUpForm button[type="submit"]');
+
+            // Countdown to update message
+            var intervalId = setInterval(function() {
+                countdown--;
+                if (countdown === 0) {
+                    clearInterval(intervalId);
+                    window.location.href = '{{ url_for("views.home") }}'; // Redirect to home page
+                } else {
+                    $('.success').text('✔ Signup successful! Redirecting in ' + countdown + ' seconds...');
+                }
+            }, 1000);
+        }
+    });
+
+    // Handle click events: SignUp and SignIn buttons
+    $('#signUpBtn').click(function() {
+        window.location.href = "{{ url_for('auth.sign_up') }}"; // Redirect to sign up page
+    });
+
+    $('#signInBtn').click(function() {
+        window.location.href = "{{ url_for('auth.sign_in') }}"; // Redirect to sign in page
+    });
+});
+</script>
 {% endblock %}

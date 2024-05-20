@@ -10,6 +10,12 @@ Profile - FilmArt
     <p>Welcome, {{ user.username }}</p>
 </header>
 
+{% if user.profile_pic %}
+    <div class="profile-picture">
+        <img src="{{ url_for('static', filename=user.profile_pic) }}" alt="{{ url_for('static', filename=user.profile_pic) }}" class="img-fluid">
+    </div>
+{% endif %}
+
 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
 
 <!-- Profile Picture Upload Form -->
@@ -22,7 +28,7 @@ Profile - FilmArt
 </form>
 
 <!-- Profile Edit Modal -->
-<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+<div class="modal fade {% if form.errors %}show{% endif %}" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="{% if form.errors %}false{% else %}true{% endif %}">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -30,22 +36,22 @@ Profile - FilmArt
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="editProfileForm" method="POST">
+                <form id="editProfileForm" method="POST" action="{{ url_for('auth.update_profile') }}">
                     {{ form.hidden_tag() }}
-                    <div class="form-group">
-                        {{ form.email.label }} <br>
-                        {{ form.email(class='form-control') }}
-                        {% if form.email.errors %}
-                            {% for error in form.email.errors %}
-                                <div class="alert alert-danger">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
                     <div class="form-group">
                         {{ form.username.label }} <br>
                         {{ form.username(class='form-control') }}
                         {% if form.username.errors %}
                             {% for error in form.username.errors %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.email.label }} <br>
+                        {{ form.email(class='form-control') }}
+                        {% if form.email.errors %}
+                            {% for error in form.email.errors %}
                                 <div class="alert alert-danger">{{ error }}</div>
                             {% endfor %}
                         {% endif %}
@@ -60,7 +66,16 @@ Profile - FilmArt
                         {% endif %}
                     </div>
                     <div class="form-group">
-                        {{ form.signup_submit(class='btn btn-primary') }}
+                        {{ form.confirm_password.label }} <br>
+                        {{ form.confirm_password(class='form-control') }}
+                        {% if form.confirm_password.errors %}
+                            {% for error in form.confirm_password.errors %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.submit(class='btn btn-primary') }}
                     </div>
                 </form>
             </div>
@@ -80,23 +95,9 @@ Profile - FilmArt
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#editProfileForm').on('submit', function (event) {
-            event.preventDefault();
-            $.ajax({
-                type: 'POST',
-                url: '{{ url_for("auth.upload_profile_pic") }}',
-                data: new FormData(this),
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    $('#editProfileModal').modal('hide');
-                    location.reload(); // Reload the page to reflect changes
-                },
-                error: function (response) {
-                    alert('An error occurred while updating your profile. Please try again.');
-                }
-            });
-        });
+        {% if form.errors %}
+            $('#editProfileModal').modal('show');
+        {% endif %}
     });
 </script>
 {% endblock %}

@@ -4,14 +4,21 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate, init as flask_migrate_init, migrate as flask_migrate_migrate, upgrade as flask_migrate_upgrade
 from .config import Config, DevelopmentConfig
+from flask_wtf import CSRFProtect
+
 
 db = SQLAlchemy()
+csrf = CSRFProtect()
 DB_NAME = 'app.db'
 
-def create_app():
+def create_app(config=None):
     app = Flask(__name__)
-    app.config.from_object(Config) #TODEL
-
+    if config:
+        app.config.from_object(config)
+    else:
+        app.config.from_object(DevelopmentConfig) #TODEL
+    
+    
     db.init_app(app)
     migrate = Migrate(app, db)
 
@@ -24,7 +31,7 @@ def create_app():
     from .models import User, Chat, Movie  # Import your models
 
     login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
+    login_manager.login_view = 'auth.sign_in'
     login_manager.init_app(app)
 
     @login_manager.user_loader
