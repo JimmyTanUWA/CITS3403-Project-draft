@@ -53,6 +53,22 @@ For mac :`source venv/bin/activate`  For Windows: `venv\Scripts\activate`
 
 
 ## Testing 
+- We use Selenium for automated testing of our movie forum website. Selenium allows us to simulate user interactions with the website to ensure that all functionality works as expected.
+- selenium package is in req.txt
+
+### Running the tests
+The Selenium tests are located in our test directory. To run the tests, navigate to the directory of the file and execute the command:
+`python -m unittest tests/selenium.py`
+and 
+`python -m unittest tests/test_testworking.py`. 
+
+Our performance of testing including : 
+- Page load test
+- Navigation test
+- Interface test 
+
+By following the tests, we can sure our website functions correctly and provides a good user exprience. 
+
 
 
 
