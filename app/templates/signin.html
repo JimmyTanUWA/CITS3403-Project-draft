@@ -22,7 +22,7 @@ Sign In - FilmArt
     {% endwith %}
 
     <!-- Form for SignIn -->
-    <form id="signInForm" method="post" action="{{ url_for('auth.login') }}">
+    <form id="signInForm" method="post" action="{{ url_for('auth.sign_in') }}">
         {{ form.hidden_tag() }}
         <div class="form-group">
             {{ form.email.label }} <br>

@@ -20,12 +20,14 @@ class Movie(db.Model):
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)  # Primary key for the user
-    email = db.Column(db.String(150), unique=True, nullable=False)  # Unique email address
-    password = db.Column(db.String(150), nullable=False)  # User's password
-    username = db.Column(db.String(150), nullable=False)  # User's username
-    chats = db.relationship('Chat', backref='user', lazy=True, foreign_keys='Chat.user_id')  # Explicit foreign_keys
-    profile_pic = db.Column(db.String(120), nullable=True)  # Add this line
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+    username = db.Column(db.String(150), nullable=False)
+    chats = db.relationship('Chat', backref='user', lazy=True)
+    profile_pic = db.Column(db.String(120), nullable=True)
+    liked_chats = db.Column(db.PickleType, default=[])
+    disliked_chats = db.Column(db.PickleType, default=[])
 
     def get_id(self):
         return str(self.id)
@@ -33,14 +35,28 @@ class User(db.Model, UserMixin):
     def __repr__(self) -> str:
         return f'<User {self.username}>'
 
+class Reply(db.Model):
+    __tablename__ = 'replies'
+    id = db.Column(db.Integer, primary_key=True)
+    data = db.Column(db.String(1000), nullable=False)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
+    chat_id = db.Column(db.Integer, db.ForeignKey('chats.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    def __repr__(self) -> str:
+        return f'<Reply {self.id} {self.data}>'
+
 class Chat(db.Model):
     __tablename__ = 'chats'
-    id = db.Column(db.Integer, primary_key=True)  # Primary key for the chat
-    data = db.Column(db.String(1000))  # Text content of the chat
-    img_path = db.Column(db.String(100), nullable=True)  # Optional image path
-    date = db.Column(db.DateTime, default=datetime.utcnow)  # Timestamp of chat creation
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Foreign key to User
-    movie_name = db.Column(db.String(100), db.ForeignKey('movies.name'), nullable=False)  # Foreign key to Movie
+    id = db.Column(db.Integer, primary_key=True)
+    data = db.Column(db.String(1000))
+    img_path = db.Column(db.String(100), nullable=True)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    movie_name = db.Column(db.String(100), db.ForeignKey('movies.name'), nullable=False)
+    likes = db.Column(db.Integer, default=0)
+    dislikes = db.Column(db.Integer, default=0)
+
 
     def __repr__(self) -> str:
         return f'<Chat {self.id} {self.data}>'

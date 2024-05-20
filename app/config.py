@@ -14,3 +14,9 @@ class DevelopmentConfig(Config):
     DEBUG = True
     TESTING = True
     FLASK_ENV = 'development'
+
+class TestConfig:
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    WTF_CSRF_ENABLED = False  # Disable CSRF for testing if needed

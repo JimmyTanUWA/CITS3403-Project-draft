@@ -2,13 +2,12 @@ import multiprocessing
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.support.ui import Select
 from unittest import TestCase
-
+from flask import url_for
 from app import create_app, db
 from app.config import TestConfig
-from app.models import User, Address
+from app.models import User
 
 localHost = "http://localhost:5000"
 
@@ -42,13 +41,16 @@ class SeleniumTests(TestCase):
         self.app_context.pop()
 
     def insert_dummy_data(self, db):
-        addr = Address(address_line1="95 Pine St", suburb="Crawley", city="Perth", postcode="6009", state="WA", country="Australia", longitude="31.9789", latitude="115.8181")
-        db.session.add(addr)
 
-        user = User(username='matt', email='matt@example.com', address=addr)
+        user = User(username='matt', email='matt@example.com')
         user.set_password('123456')
         db.session.add(user)
         db.session.commit()
+
+    def get_csrf_token(self):
+        # Extract CSRF token from the current page
+        csrf_token = self.driver.find_element(By.NAME, "csrf_token").get_attribute("value")
+        return csrf_token
 
     def test_edit_profile(self):
         """
@@ -56,10 +58,13 @@ class SeleniumTests(TestCase):
         """
         # Log in first
         self.driver.get(localHost + "/login")
+        csrf_token = self.get_csrf_token()
         loginElement = self.driver.find_element(By.ID, "username")
         loginElement.send_keys("matt")
         loginElement = self.driver.find_element(By.ID, "password")
         loginElement.send_keys("123456")
+        csrfElement = self.driver.find_element(By.NAME, "csrf_token")
+        csrfElement.send_keys(csrf_token)
         submitElement = self.driver.find_element(By.ID, "submit")
         submitElement.click()
 
@@ -74,6 +79,7 @@ class SeleniumTests(TestCase):
         time.sleep(1)  # Wait for the modal to open
 
         # Edit the profile
+        csrf_token = self.get_csrf_token()
         emailElement = self.driver.find_element(By.ID, "email")
         emailElement.clear()
         emailElement.send_keys("newemail@example.com")
@@ -82,6 +88,8 @@ class SeleniumTests(TestCase):
         usernameElement.send_keys("newusername")
         passwordElement = self.driver.find_element(By.ID, "password")
         passwordElement.send_keys("newpassword")
+        csrfElement = self.driver.find_element(By.NAME, "csrf_token")
+        csrfElement.send_keys(csrf_token)
 
         submitElement = self.driver.find_element(By.CSS_SELECTOR, "#editProfileForm .btn.btn-primary")
         submitElement.click()

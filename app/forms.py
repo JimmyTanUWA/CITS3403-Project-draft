@@ -33,24 +33,22 @@ class SignInForm(FlaskForm):
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
 
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if not user:
+            raise ValidationError("That email doesn't exist")
+
+
 class ChatForm(FlaskForm):
     data = StringField('Chat Content', validators=[InputRequired(), Length(min=1, max=1000)])
     img = FileField('Upload Image')
     submit = SubmitField('Add Chat')
 
 
-class ChangeInfoForm(FlaskForm):
-    username = StringField('Username', validators=[InputRequired(), Length(min=3, max=20)])
-    email = StringField('Email', validators=[InputRequired(), Email()])
-    password = PasswordField('Password', validators=[
-        InputRequired(), 
-        Length(min=6, message='Password should be at least 6 characters long.')
-    ])
-    confirm_password = PasswordField('Confirm Password', validators=[
-        InputRequired(), 
-        EqualTo('password', message='Passwords must match.')
-    ])
-    submit = SubmitField('Confirm Change')
+class ChangeUsernameEmailForm(FlaskForm):
+    username = StringField('Username', validators=[Length(min=3, max=20)])
+    email = StringField('Email', validators=[Email()])
+    submit = SubmitField('Update Info')
 
     def validate_username(self, username):
         if username.data != current_user.username:
@@ -63,8 +61,12 @@ class ChangeInfoForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('That email is already registered.')
-            
-            #TODO edit profile
-            #TODO ability to comment on movies
-            #TODO add some bottom page functionality
-            #TODO change all inconsistent naming
+
+class ChangePasswordForm(FlaskForm):
+    password = PasswordField('New Password', validators=[
+        Length(min=6, message='Password should be at least 6 characters long.')
+    ])
+    confirm_password = PasswordField('Confirm Password', validators=[
+        EqualTo('password', message='Passwords must match.')
+    ])
+    submit = SubmitField('Change Password')
