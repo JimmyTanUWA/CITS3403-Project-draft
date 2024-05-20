@@ -63,12 +63,7 @@ def like_comment(chat_id):
         chat.likes += 1
         user.liked_chats.append(chat_id)
         flash(f'Liked chat {chat_id}', category='info')
-    
     db.session.commit()
-    
-    # Flash the updated lists for debugging
-    flash(f'Liked chats after update: {user.liked_chats}', category='info')
-    flash(f'Disliked chats after update: {user.disliked_chats}', category='info')
 
     return redirect(url_for('views.moviedetails', name=chat.movie_name))
 
