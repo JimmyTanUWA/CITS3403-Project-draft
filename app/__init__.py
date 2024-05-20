@@ -16,7 +16,7 @@ def create_app(config=None):
     if config:
         app.config.from_object(config)
     else:
-        app.config.from_object(DevelopmentConfig) #TODEL
+        app.config.from_object(Config)
     
     
     db.init_app(app)
