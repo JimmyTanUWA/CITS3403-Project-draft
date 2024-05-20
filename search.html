@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>movietag</title>
+    <title>search</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='movietag.css') }}">
 </head>
 <body>
     <div class="container mt-5">
-        <h1>{{ movieT[0]['tags'] }}</h1>
+        <h1>search</h1>
         <div class="movie-grid">
-            {% for movie in movieT %}
+            {% for movie in movieSS %}
             <div class="movie-item">
                 <a href="{{ url_for('moviedetails', name=movie.name) }}">
                     <img src="{{ movie.address }}" alt="{{ movie.name }}">
