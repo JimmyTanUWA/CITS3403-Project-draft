@@ -144,7 +144,9 @@
 .movie-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
+    grid-gap: 20px; /* Increased gap between items */
+    margin: 0 auto;
+    max-width: 1000px; /* Adjust based on your needs */
 }
 
 .movie-item {
@@ -156,28 +158,30 @@
 
 .movie-item img {
     width: 100%;
-    max-width: 200px;
     height: auto;
-    border-radius: 8px;
-    margin-bottom: 10px;
+    object-fit: cover; /* Ensures the image covers the entire space */
+    border-radius: 15px; /* Rounded corners */
 }
 
 .movie-item a {
-    color: #333;
     text-decoration: none;
+    color: black;
+    font-size: 16px;
     font-weight: bold;
+    margin-top: 10px; /* More space between image and title */
+}
+
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px auto;
+    max-width: 1000px;
 }
 
 .movie-item a:hover {
     text-decoration: underline;
 }
 
-.navigation-buttons {
-    display: flex;
-    justify-content: space-between;
-    position: relative;
-    width: 100%; /* Ensure the container spans the desired width */
-}
 
 .prev-button, .next-button {
     padding: 10px 20px;
